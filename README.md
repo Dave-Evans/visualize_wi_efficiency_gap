@@ -8,8 +8,9 @@ While reading about the efficiency gap, here [https://www.brennancenter.org/lega
 Perhaps there is a reason there are no maps like these for a reason, and if you know one, please let me know.
 
 TODO:
+
 	- deploy
 	- simplify dist boundaries for faster load
 	- add drop down for different years
 	- add radio button or other selector for SEN and maybe con districts
-
+	- add overall election efficiency gap
