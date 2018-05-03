@@ -235,6 +235,18 @@
       Note how the districts around Madison and Milwaukee are deep blue,
       because the number of votes for the Democratic candidate were far 
       more than were needed to win. 
+        <div style="border: black; font-size:12px; width:400px">
+      
+          <p>
+            <input type="radio" name="house" id="house_asm" value="Assembly" checked> Assembly <br>
+            <input type="radio" name="house" id="house_sen" value="Senate"> Senate
+          </p>
+          Select year: <select id="sel_year">
+            <option value='2014'> 2014 </option>
+            <option value='2016'> 2016 </option>
+        </select><br>
+      
+      </div>
 
     </div>
     </div>
@@ -249,6 +261,12 @@
   // load a tile layer
   L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.png', {'attribution': '<a href="http://stamen.com">Stamen Design</a>'})
     .addTo(map);
+
+//Seems like a good thing to do would be wrap the load
+// into a function and keep the data in an obj called geojson
+//  like https://stackoverflow.com/questions/34746963/update-geojson-shapes-colors-with-leaflet?rq=1
+// also maybe helpful https://stackoverflow.com/questions/42564103/ajax-and-leaflet-inspect-feature-properties-before-styling-adding-to-map?rq=1
+
  // load GeoJSON from database
  console.log("Okay, trying to load it...");
  {% url 'get_map_data' as get_map_data_url %}
@@ -382,7 +400,35 @@ var collapsePanelXs = function(){
 }
 
 
+  var house = "Assembly";
+  var year = "2014";
 
+  $("#house_asm").change(function() {
+    check_house();
+  });
+  $("#house_sen").change(function() {
+    check_house();
+  });
+
+
+  $("#sel_year").change(function() {
+    
+    year = $(this).val();
+
+    console.log("Selected year is " + year);
+
+  });
+
+
+  var check_house = function(){
+      console.log("Checking house...");
+      if ($("#house_sen").is(':checked')){
+        house = "Senate";
+      } else {
+        house = "Assembly";
+      }
+      console.log("Checked house is " + house);
+    }
 
   </script>
   
@@ -390,3 +436,6 @@ var collapsePanelXs = function(){
 </html>
 
 <!-- <script type="text/javascript" src="map.js"></script> -->
+
+
+
