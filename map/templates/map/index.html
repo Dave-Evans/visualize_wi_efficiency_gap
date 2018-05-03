@@ -237,13 +237,14 @@
       more than were needed to win. 
         <div style="border: black; font-size:12px; width:400px">
       
-          <p>
+<!--           <p>
             <input type="radio" name="house" id="house_asm" value="Assembly" checked> Assembly <br>
             <input type="radio" name="house" id="house_sen" value="Senate"> Senate
-          </p>
+          </p> -->
           Select year: <select id="sel_year">
-            <option value='2014'> 2014 </option>
             <option value='2016'> 2016 </option>
+            <option value='2014'> 2014 </option>
+            
         </select><br>
       
       </div>
@@ -267,20 +268,12 @@
 //  like https://stackoverflow.com/questions/34746963/update-geojson-shapes-colors-with-leaflet?rq=1
 // also maybe helpful https://stackoverflow.com/questions/42564103/ajax-and-leaflet-inspect-feature-properties-before-styling-adding-to-map?rq=1
 
- // load GeoJSON from database
- console.log("Okay, trying to load it...");
- {% url 'get_map_data' as get_map_data_url %}
- $.getJSON("{{ get_map_data_url }}",function(data){
 
-// load GeoJSON from an external file
-  // $.getJSON("asm.geojson",function(data){
 
-    // add GeoJSON layer to the map once the file is loaded
-    L.geoJson(data,{
-      style: function(feature){
-        var fillColor,
-          perc = ( feature.properties.asmdemwasted16 /  feature.properties.asmtot16) * 100;
-        if ( perc > 44.4 ) fillColor =  '#08306B';
+function returnFillColor(perc){
+  // Just for Dem colors
+  var fillColor;
+  if ( perc > 44.4 ) fillColor =  '#08306B';
         else if ( perc > 38.88 ) fillColor = '#08519C';
         else if ( perc > 33.33 ) fillColor = '#2171B5' ;
         else if ( perc > 27.78 ) fillColor = '#4292C6' ;
@@ -292,16 +285,64 @@
         else if ( perc == 0 ) fillColor = '#f4a582' ;
         else fillColor = '#F7FBFF';
         // no data
+        // console.log("Perc " + perc + " means color " + fillColor);
       return { color: "#999", weight: 1, fillColor: fillColor, fillOpacity: .9 };
+};
+
+var geojson = null;
+var asmlayerlist = {};
+function loadMap(){
+
+  if (geojson != null){
+    console.log("Already loaded.");
+    return;
+  }
+  console.log("Okay, trying to load it..."); 
+  {% url 'get_map_data' as get_map_data_url %}
+
+ $.getJSON("{{ get_map_data_url }}",function(data){
+
+// load GeoJSON from an external file
+  // $.getJSON("asm.geojson",function(data){
+
+    // add GeoJSON layer to the map once the file is loaded
+    geojson = L.geoJson(data,{
+      style: function(feature){
+
+        var perc = ( feature.properties.asmdemwasted16 /  feature.properties.asmtot16) * 100;
+        // console.log("District " + feature.properties.asm + " percent: " + perc);
+        return returnFillColor(perc);
       },
       onEachFeature: function( feature, layer ){
         layer.bindPopup( "<strong>" + "Assembly District " + feature.properties.asm + "</strong><br/>" + (
             Math.round( (feature.properties.asmdemwasted16 /  feature.properties.asmtot16) * 100) + "% Democratic <br/>votes wasted " 
             )
-        )
+        );
+        // console.log("Adding to list district  " + feature.properties.asm)
+        asmlayerlist[feature.properties.asm]=layer;
       }
     }).addTo(map);
   });
+
+}
+ // load GeoJSON from database
+ loadMap();
+
+function updateFillColors(yr){
+  var dem_field = "asmdemwasted" + yr;
+  var tot_field = "asmtot" + yr;
+
+  for (var i = 1; i < 100; i++){
+    var perc = asmlayerlist[i].feature.properties[dem_field] / asmlayerlist[i].feature.properties[tot_field] * 100;
+
+    var fillcol = returnFillColor(perc);
+
+    asmlayerlist[i].addTo(map).setStyle(fillcol);
+
+  };
+};
+ 
+
 
   function getColor(d) {
     switch(d) {
@@ -318,18 +359,6 @@
       default: return "#F7FBFF";
     }
   };
-  
-
-        // if ( perc > 44.4 ) fillColor =  '#08306B';         9
-        // else if ( perc > 38.88 ) fillColor = '#08519C';    8
-        // else if ( perc > 33.33 ) fillColor = '#2171B5' ;   7
-        // else if ( perc > 27.78 ) fillColor = '#4292C6' ;   6
-        // else if ( perc > 22.22 ) fillColor = '#6BAED6' ;   5
-        // else if ( perc > 16.66 ) fillColor =  '#9ECAE1' ;  4
-        // else if ( perc > 11.11 ) fillColor =  '#C6DBEF' ;  3
-        // else if ( perc > 5.56 ) fillColor =  '#DEEBF7' ;   2
-        // else if ( perc > 0 ) fillColor =  '#F7FBFF' ;      1
-        // else fillColor = '#F7FBFF';
 
 
   // FIRST LEGEND FOR TESTING
@@ -416,6 +445,8 @@ var collapsePanelXs = function(){
     year = $(this).val();
 
     console.log("Selected year is " + year);
+
+    updateFillColors(year.substring(2));
 
   });
 
