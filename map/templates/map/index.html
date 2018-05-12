@@ -328,6 +328,31 @@ function loadMap(){
  // load GeoJSON from database
  loadMap();
 
+function updatePopup(yr){
+    var dem_field = "asmdemwasted" + yr;
+    var tot_field = "asmtot" + yr;
+  geojson.eachLayer(function (layer) {
+
+
+    
+
+    var name = layer.feature.properties.asm;
+    var tot = layer.feature.properties[tot_field];
+    var wasted = layer.feature.properties[dem_field];
+
+    // console.log("ASM " + name);
+    // console.log("Total: " + tot);
+    // console.log("Wasted: " + wasted);
+    var wasted = layer.feature.properties[dem_field];
+    var contnt = "<strong>" + "Assembly District " + name + "</strong><br/>" + (
+            Math.round( (wasted / tot ) * 100) + "% Democratic <br/>votes wasted " 
+            );
+    layer.bindPopup( contnt  );
+    
+    }
+  )
+};
+
 function updateFillColors(yr){
   var dem_field = "asmdemwasted" + yr;
   var tot_field = "asmtot" + yr;
@@ -447,6 +472,7 @@ var collapsePanelXs = function(){
     console.log("Selected year is " + year);
 
     updateFillColors(year.substring(2));
+    updatePopup(year.substring(2));
 
   });
 
