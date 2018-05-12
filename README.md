@@ -13,8 +13,9 @@ TODO:
 		- Still need to make smoother transition to webserver, adjusting user names and etc
 		- Also need to investigate how to make use of peer authentication to db
 	- DONE: simplify dist boundaries for faster load, cut down on load time by factor of ten or so
-	- Before below, need to restructure data load so it is only loaded once and can be
+	- DONE: Before below, need to restructure data load so it is only loaded once and can be
 	restyled without undue strain
-	- add drop down for different years
+	- DONE: add drop down for different years
 	- add radio button or other selector for SEN and maybe con districts
 	- add overall election efficiency gap
+	- How many other years to add?
