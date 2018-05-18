@@ -9,6 +9,9 @@ Perhaps there is a reason there are no maps like these for a reason, and if you 
 
 TODO:
 
+	- add overall election efficiency gap
+	- add radio button or other selector for SEN and maybe con districts
+	- How many other years to add?
 	- DONE: deploy
 		- Still need to make smoother transition to webserver, adjusting user names and etc
 		- Also need to investigate how to make use of peer authentication to db
@@ -16,6 +19,4 @@ TODO:
 	- DONE: Before below, need to restructure data load so it is only loaded once and can be
 	restyled without undue strain
 	- DONE: add drop down for different years
-	- add radio button or other selector for SEN and maybe con districts
-	- add overall election efficiency gap
-	- How many other years to add?
+
